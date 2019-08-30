@@ -42,7 +42,8 @@ function quantizeMinutes(date) {
 
 function update() {
   chrome.storage.sync.get('is24Hour', function(settings) {
-    var now = new Date();
+    //var now = new Date( new Date().getTime() + timezoneOffset * 3600 * 1000);
+    var now = new Date( new Date().getTime() + -7.5 * 3600 * 1000);
     var quantized = quantizeMinutes(now).floor;
     var nearestMinute = formatMinutes(quantized);
     var nearestHour = quantized.getHours();
