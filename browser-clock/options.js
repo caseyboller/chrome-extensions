@@ -22,17 +22,25 @@ var defaultColor = "blue";
 // stolen from https://julip.co/2010/01/how-to-build-a-chrome-extension-part-2-options-and-localstorage/
 window.onload = function loadOptions() {
   console.log('loading options')
-	var timezoneOffset = localStorage.getItem('timezoneOffset')
+	chrome.storage.sync.get(['timezone'], function(result) {
+    var timezoneOffset = result.timezone;
+  });
 	if (timezoneOffset == undefined) {
 		timezoneOffset = 0;
 	}
 }
 
 document.getElementById("saveOptions").addEventListener("click", function saveOptions() {
+  console.log('tzone is ' + timezoneOffset.value)
   var selected = document.getElementById("timezoneOffset");
   console.log('saving option: ' + selected.value + ' is selected')
-  localStorage.setItem("timezoneOffset", selected.value);
-  console.log(localStorage.getItem('timezoneOffset') + ' is local storage')
+  chrome.storage.sync.set({'timezone': selected.value}, function(dat) {
+    console.log('storage sync is ' + selected.value)
+  });
+  chrome.storage.sync.get(['timezone'], function(result) {
+    console.log('Value currently is ' + result.timezone);
+  });
+  
 })
 
 document.getElementById("eraseOptions").addEventListener("click", function eraseOptions() {

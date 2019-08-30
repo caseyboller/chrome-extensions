@@ -43,32 +43,35 @@ function quantizeMinutes(date) {
 function update() {
   chrome.storage.sync.get('is24Hour', function(settings) {
     //var now = new Date( new Date().getTime() + timezoneOffset * 3600 * 1000);
-    if (localStorage.getItem("timezoneOffset") == undefined) {
-      var now = new Date();
-      console.log('no timezone saved')
-    } else {
-      var now = new Date( new Date().getTime() + localStorage.getItem("timezoneOffset") * 3600 * 1000);
-      console.log('timezone is ' + localStorage.getItem("timezoneOffset"))
-    }
-    var quantized = quantizeMinutes(now).floor;
-    var nearestMinute = formatMinutes(quantized);
-    var nearestHour = quantized.getHours();
-    var isPM = nearestHour >= 12;
-    if (!settings.is24Hour && nearestHour > 12) {
-      nearestHour %= 12;
-    }
-    chrome.browserAction.setBadgeBackgroundColor({color: '#000'});
-    chrome.browserAction.setBadgeText({text: nearestMinute});
-    chrome.browserAction.setIcon({imageData: getHoursImageData(nearestHour)});
-    // Hack to get a sensibly formatted full time, because generally speaking
-    // that's a real pain in JS without a library. However, toDateString()
-    // gives a nice enough date like "Sat Jun 07 2014", we just need to attach
-    // the time (depending on 24 preference) to the end.
-    var title = [now.toDateString(), ', ', nearestHour + ':' + nearestMinute];
-    if (!settings.is24Hour) {
-      title.push(isPM ? ' PM' : ' AM');
-    }
-    chrome.browserAction.setTitle({title: title.join('')});
+    var now = undefined;
+    chrome.storage.sync.get(['timezone'], function(result) {
+      if (result.timezone == undefined) {
+        console.log('no timezone saved')
+      } else {
+        var now = new Date( new Date().getTime() + result.timezone * 3600 * 1000);
+        console.log('timezone is ' + result.timezone)
+      }
+      console.log('Value currently is ' + result.timezone);
+      var quantized = quantizeMinutes(now).floor;
+      var nearestMinute = formatMinutes(quantized);
+      var nearestHour = quantized.getHours();
+      var isPM = nearestHour >= 12;
+      if (!settings.is24Hour && nearestHour > 12) {
+        nearestHour %= 12;
+      }
+      chrome.browserAction.setBadgeBackgroundColor({color: '#000'});
+      chrome.browserAction.setBadgeText({text: nearestMinute});
+      chrome.browserAction.setIcon({imageData: getHoursImageData(nearestHour)});
+      // Hack to get a sensibly formatted full time, because generally speaking
+      // that's a real pain in JS without a library. However, toDateString()
+      // gives a nice enough date like "Sat Jun 07 2014", we just need to attach
+      // the time (depending on 24 preference) to the end.
+      var title = [now.toDateString(), ', ', nearestHour + ':' + nearestMinute];
+      if (!settings.is24Hour) {
+        title.push(isPM ? ' PM' : ' AM');
+      }
+      chrome.browserAction.setTitle({title: title.join('')});
+    });
   });
 }
 
@@ -88,4 +91,3 @@ chrome.alarms.onAlarm.addListener(update);
 chrome.browserAction.onClicked.addListener(update);
 chrome.runtime.onStartup.addListener(update);
 chrome.storage.onChanged.addListener(update);
-localStorage.onChanged.addListener(update);
