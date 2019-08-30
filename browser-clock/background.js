@@ -43,7 +43,13 @@ function quantizeMinutes(date) {
 function update() {
   chrome.storage.sync.get('is24Hour', function(settings) {
     //var now = new Date( new Date().getTime() + timezoneOffset * 3600 * 1000);
-    var now = new Date( new Date().getTime() + -7.5 * 3600 * 1000);
+    if (localStorage.getItem("timezoneOffset") == undefined) {
+      var now = new Date();
+      console.log('no timezone saved')
+    } else {
+      var now = new Date( new Date().getTime() + localStorage.getItem("timezoneOffset") * 3600 * 1000);
+      console.log('timezone is ' + localStorage.getItem("timezoneOffset"))
+    }
     var quantized = quantizeMinutes(now).floor;
     var nearestMinute = formatMinutes(quantized);
     var nearestHour = quantized.getHours();
@@ -82,3 +88,4 @@ chrome.alarms.onAlarm.addListener(update);
 chrome.browserAction.onClicked.addListener(update);
 chrome.runtime.onStartup.addListener(update);
 chrome.storage.onChanged.addListener(update);
+localStorage.onChanged.addListener(update);

@@ -40,8 +40,10 @@
       <label><input name="is24Hour" type="checkbox"></input> 24 hour</label>
     </div>
     <div class="setting-with-label">
-      <label><input name="timezoneOffset" type="number"></input> UTC Offset from local timezone</label>
+      <label><input id="timezoneOffset" type="number"></input> UTC Offset from local timezone</label>
     </div>
+    <button id="saveOptions">Save</button>
+    <button id="eraseOptions">Restore</button>
     <div id="loading"></div>
     <script src="options.js"></script>
   </body>
