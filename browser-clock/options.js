@@ -2,6 +2,13 @@
 
 var is24Hour = document.querySelector('input[name=is24Hour]');
 console.log('line 5' + timezoneOffset.value)
+var whiteText = document.querySelector('input[name=whiteText]');
+console.log(whiteText.value)
+
+chrome.storage.sync.get('whiteText', function(settings) {
+  whiteText.checked = !!settings.whiteTextSelector;
+  console.log(whiteText.checked)
+})
 
 chrome.storage.sync.get('is24Hour', function(settings) {
   is24Hour.checked = !!settings.is24Hour;
@@ -12,7 +19,15 @@ chrome.storage.onChanged.addListener(function(changes) {
   if (changes.is24Hour) {
     is24Hour.checked = !!changes.is24Hour.newValue;
   }
+  if (changes.whiteText) {
+    console.log(changes.whiteText.newValue)
+    whiteText.checked = !!changes.whiteText.newValue;
+  }
 });
+
+whiteText.onchange = function() {
+  chrome.storage.sync.set({whiteText: whiteText.checked});
+}
 
 is24Hour.onchange = function() {
   chrome.storage.sync.set({is24Hour: is24Hour.checked});
@@ -40,6 +55,9 @@ document.getElementById("saveOptions").addEventListener("click", function saveOp
   chrome.storage.sync.get(['timezone'], function(result) {
     console.log('Value currently is ' + result.timezone);
   });
+  chrome.storage.sync.get(['whiteText'], function(result) {
+    console.log('White text is set to ' + result.whiteText)
+  })
   
 })
 

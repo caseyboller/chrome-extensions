@@ -14,6 +14,18 @@ function getHoursImageData(hours) {
                    'Tahoma, ' +             // Windows#2
                    'sans-serif';            // Other
     context.textAlign = 'center';
+
+    // why the fUCK doesnt this work
+    // chrome.storage.sync.get('whiteText', function(settings) {
+    //   console.log('ayo' + settings.whiteText)
+    //   if(settings.whiteText) {
+    //     console.log('ayo2' + settings.whiteText)
+        context.fillStyle = 'white';
+    //   } else {
+    //     context.fillStyle = 'blue';
+    //   }
+    // })
+    
     context.textBaseline = 'middle';
     context.fillText(hours, size/2, size/3);
     return context.getImageData(0, 0, size, size);
